@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.cc.mapper.UserMapper">
+	
+	
+	<!--查询所有图书的总数  -->
+	<select id="findAllCountBooks" resultType="Integer">
+		select count(*) from AllBooks 
+	</select>
+	<!--分页查询出所有图书  -->
+	<select id="findAllBooks" resultType="com.cc.entity.AllBooks">
+		select * from AllBooks limit #{start},#{end}
+	</select>
+	<!-- 根据信息查询图书数量 -->
+	<select resultType="java.lang.Integer" parameterType="map" id="SelectBookByMessageCount">
+		select count(*) from AllBooks
+		<where>
+			<if test="bookname!=null and bookname!=''">
+				and book_name=#{bookname}
+			</if>
+			<if test="booktype!='请选择'">
+				and book_type=#{booktype}
+			</if>
+			<if test="Autho!=null and Autho!=''">
+				and writer_name=#{Autho}
+			</if>
+		</where>
+	</select>
+	<!-- 根据信息查询所有图书 -->
+	<select id="SelectBookByMessage" parameterType="map" resultType="com.cc.entity.AllBooks">
+		select * from AllBooks
+		<where>
+			<if test="bookname!=null and bookname!=''">
+				and book_name=#{bookname}
+			</if>
+			<if test="booktype!='请选择'">
+				and book_type=#{booktype}
+			</if>
+			<if test="Autho!=null and Autho!=''">
+				and writer_name=#{Autho}
+			</if>
+		</where>
+		limit #{start},#{end}
+	</select>
+	
+	<!-- 根据图书编号查看该图书库存 -->
+	<select id="findBookById" parameterType="Integer" resultType="com.cc.entity.AllBooks">
+		select * from AllBooks where book_id=#{book_id}
+	</select>
+	
+	<!-- 将借阅的图书信息放入借阅表中 -->
+	<insert id="BorrowBook" parameterType="com.cc.entity.Borrow">
+		insert into borrow values(#{book_id},#{book_name},#{user_name},now(),date_add(now(),interval 2 MONTH),0)
+	</insert>
+	
+	<!-- 更改图书库存 -->
+	<update id="updateBookCount" parameterType="Integer">
+		update AllBooks set counts=counts-1 where book_id=#{book_id}
+	</update>
+	<!--查询登录用户的借阅数  -->
+	<select id="SelectBorrowMessageByUserName" parameterType="String" resultType="Integer">
+		select count(*) from borrow where user_name=#{user_name}
+	</select>
+	<!--查询登录用户的借阅记录  -->
+	<select id="SelectBorrowMessage" resultType="com.cc.entity.Borrow">
+		select * from borrow where user_name=#{username}  limit #{start},#{end}
+	</select>
+	<!--还书  -->
+	<update id="BackBook" parameterType="Integer">
+		update borrow set borrow_status=1 where book_id=#{book_id}
+	</update>
+</mapper>

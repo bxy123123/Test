@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<!-- 配置SecurityManager -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realms" ref="loginRealm"></property>
+		<!--配置cookie的生存时间  -->
+		<!-- <property name="rememberMeManager.cookie.maxAge" value="10"></property> -->
+	</bean>
+	<!-- 配置Realm:直接配置，需要实现org.apache.shiro.realm.Realm接口-->
+	<bean id="loginRealm" class="com.cc.realm.LoginRealm">
+		<property name="credentialsMatcher">
+			<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+				<!-- 设置加密方式 -->
+				<property name="hashAlgorithmName" value="MD5"></property>
+				<!-- 指定加密次数 -->
+				<property name="hashIterations" value="1024"></property>
+			</bean>
+		</property>
+	</bean>
+	<!--LifecycleBeanPostProcessor:可以自动来调用配置Spring IOC容器中shiro bean的生命周期  -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"></bean>
+	
+	
+	<!--启动IOC容器中使用shiro注解 ,但必须在配置了LifecycleBeanPostProcessor -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"></bean>
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"></property>
+	</bean>
+	
+	
+	<!--配置ShiroFilter  -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager"></property>
+		<property name="loginUrl" value="/login.do"></property>
+		<property name="successUrl" value="/Index"></property>
+		<property name="filters">
+            <map>
+                <!--退出过滤器-->
+                <entry key="logout" value-ref="systemLogoutFilter" />
+            </map>
+        </property>
+	<!-- 没有权限的页面 -->
+		<!-- <property name="unauthorizedUrl" value="/unauthorized.jsp"></property> -->
+		<!-- 配置哪些页面需要保护，以及访问这些页面需要访问的权限
+			1.anon:可以被匿名访问
+			2.authc:必须认证通过（登录）之后才能访问的页面
+			3.logout:登出
+			4.roles；角色过滤器
+		 -->
+		<property name="filterChainDefinitions">
+			<value>
+				<!--静态资源设置允许匿名访问  -->
+				/static/**=anon
+				/my_js/**=anon
+				/CheckLogin.do=anon
+				/CheckedRegister.do=anon
+				/register.do=anon
+				/logout.do=logout
+				/Index.do=anon
+				/**=authc
+			</value>
+		</property>
+	</bean>
+</beans>

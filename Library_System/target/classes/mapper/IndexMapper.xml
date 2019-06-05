@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.cc.mapper.IndexMapper">
+	
+	<!--根据账号查找用户  -->
+	<select id="SelectUserByName" parameterType="String" resultType="com.cc.entity.User">
+		select * from user where user_name=#{user_name}
+	</select>
+	
+	<!--根据账号修改密码  -->
+	<update id="UpdatePwd">
+		update user set user_pwd=#{newpwd} where user_name=#{uname}
+	</update>
+</mapper>

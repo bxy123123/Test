@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.cc.mapper.AdminMapper">
+	
+	<!--添加图书  -->
+	<insert id="AddBook" parameterType="com.cc.entity.AllBooks">
+		insert into AllBooks values(null,#{book_type},#{book_name},#{writer_name},#{press},#{counts})
+	</insert>
+	
+	<!--修改图书(数据的回显)  -->
+	<select id="showBookById" parameterType="Integer" resultType="com.cc.entity.AllBooks">
+		select * from AllBooks where book_id=#{book_id}
+	</select>
+	
+	<!-- 修改图书 -->
+	<update id="UpdateBook" parameterType="com.cc.entity.AllBooks">
+		update AllBooks set book_type=#{book_type},book_name=#{book_name},writer_name=#{writer_name},press=#{press},counts=#{counts}
+				where book_id=#{book_id}
+	</update>
+	
+	<!--根据图书编号删除图书  -->
+	<delete id="DeleteBook" parameterType="Integer">
+		delete from AllBooks where book_id=#{book_id}
+	</delete>
+</mapper>

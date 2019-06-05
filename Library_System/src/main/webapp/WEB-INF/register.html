@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>注册页面</title>
+    <meta name="description" content="这是一个 index 页面">
+    <meta name="keywords" content="index">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="icon" type="image/png" href="assets/i/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/i/app-icon72x72@2x.png">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI" />
+    <link rel="stylesheet" href="static/assets/css/amazeui.min.css" />
+    <link rel="stylesheet" href="static/assets/css/amazeui.datatables.min.css" />
+    <link rel="stylesheet" href="static/assets/css/app.css">
+    <script src="static/jQuery/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="my_js/base.js"></script>
+    <script type="text/javascript" src="my_js/regular_expression.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		//注册账号
+		$("#register").click(Register);
+		//判断密码的强度
+		$("#userpwd").blur(Checknewpwd);
+	});
+	
+	//清空提示信息
+	$("#username").click(function(){
+		$("#username_error").html("");
+	});
+	$("#userpwd").click(function(){
+		$("#userpwd_error").html("");
+	});
+	$("#userpwd2").click(function(){
+		$("#userpwd2_error").html("");
+	});
+	$("#useremail").click(function(){
+		$("#useremail_error").html("");
+	});
+	$("#userphone").click(function(){
+		$("#userphone_error").html("");
+	});
+	
+	
+	//注册账号
+	function Register(){
+		//获取输入的信息
+		var username=$("#username").val().trim();
+		var userpwd=$("#userpwd").val().trim();
+		var userpwd2=$("#userpwd2").val().trim();
+		var useremail=$("#useremail").val().trim();
+		var userphone=$("#userphone").val().trim();
+		
+		//进行简单判断
+		var ok = true;
+		if(!regphone.test(userphone)|| userphone==""){
+			$("#userphone_error").html("* 请正确填写手机号码!");
+			ok=false;
+		}
+		if(!regemail.test(useremail)|| useremail==""){
+			$("#useremail_error").html("* 请正确填写您的邮箱!");
+			ok=false;
+		}
+		if(userpwd!=userpwd2){
+			$("#userpwd2_error").html("* 两次密码不一致!");
+			ok=false;
+		}
+		if(username==""){
+			$("#username_error").html("* 请填写你的账号");
+			ok=false;
+		}
+		if(userpwd==""){
+			$("#userpwd_error").html("* 请填写你的密码");
+			ok=false;
+		}
+		if(userpwd2==""){
+			$("#userpwd2_error").html("* 请确认密码");
+			ok=false;
+		}
+		if(ok){
+		$.ajax({
+			type: "POST",
+			url:path+"/CheckedRegister.do",
+			data:{"username":username,"userpwd":userpwd,
+					"useremail":useremail,"userphone":userphone},
+			dataType: "json",
+			success:function(d){
+				if(d.status==0){
+					alert("注册成功");
+					location.href="login.do";
+				}
+			},
+			error:function(){
+				alert("注册失败!");
+			}
+		});
+		}
+	  }
+	
+	//判断密码的强度
+	function Checknewpwd(){
+		var newpwd=$("#userpwd").val().trim();
+		var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");//强(密码长度大于等于8位数 包含大写字母[A-Z] + 小写字母[a-z] + 数字[0-9] + 非单词字符的特殊字符[标点符号，空格)
+		var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");//中( 密码长度大于等于7位数 大写字母[A-Z] + 小写字母[a-z] 或者 大写字母[A-Z] + 数字[0-9] 或者 小写字母[a-z] + 数字[0-9] + 任意字符 结尾)
+		var enoughRegex = new RegExp("(?=.{6,}).*", "g");//弱(大于等于6位 任何字符或者数字)
+		
+		if(strongRegex.test(newpwd)){
+			$("#userpwd_error").html("* 密码强度强");
+		}
+		if(mediumRegex.test(newpwd)){
+			$("#userpwd_error").html("* 密码强度中");
+		}
+		if(enoughRegex.test(newpwd)){
+			$("#userpwd_error").html("* 密码强度弱");
+		}
+	}
+	</script>
+</head>
+
+<body data-type="login">
+    <script src="static/assets/js/theme.js"></script>
+    <div class="am-g tpl-g">
+        <!-- 风格切换 -->
+        <div class="tpl-skiner">
+            <div class="tpl-skiner-toggle am-icon-cog">
+            </div>
+            <div class="tpl-skiner-content">
+                <div class="tpl-skiner-content-title">
+                    选择主题
+                </div>
+                <div class="tpl-skiner-content-bar">
+                    <span class="skiner-color skiner-white" data-color="theme-white"></span>
+                    <span class="skiner-color skiner-black" data-color="theme-black"></span>
+                </div>
+            </div>
+        </div>
+        <div class="tpl-login">
+            <div class="tpl-login-content">
+                <div class="tpl-login-title">注册用户</div>
+                <span class="tpl-login-content-info">
+                  创建一个新的用户
+              </span>
+                <form class="am-form tpl-form-line-form" method="post" action="">
+                    <div class="am-form-group">
+                        <input type="text" class="tpl-form-input" id="username" name="username" required="required" placeholder="请输入账号">
+                    	<span id="username_error" style="color:red;font-size:12px;"></span>
+                    </div>
+					<div class="am-form-group">
+                        <input type="password" class="tpl-form-input" id="userpwd" name="password" required="required" placeholder="请输入密码">
+                    		<span id="userpwd_error" style="color:red;font-size:12px;"></span>
+                    </div>
+					<div class="am-form-group">
+                        <input type="password" class="tpl-form-input" id="userpwd2" name="password2" required="required" placeholder="确认密码">
+		                <span id="userpwd2_error" style="color:red;font-size:12px;"></span>   
+                    </div>
+					<div class="am-form-group">
+                        <input type="email" class="tpl-form-input" id="useremail" name="email" required="required" placeholder="请输入邮箱">
+                    	<span id="useremail_error" style="color:red;font-size:12px;"></span>
+                    </div>
+                    <div class="am-form-group">
+                        <input type="text" class="tpl-form-input" id="userphone" name="phone" required="required" placeholder="请输入手机号">
+                    	<span id="userphone_error" style="color:red;font-size:12px;"></span>
+                    </div>
+					<div class="am-form-group">
+                        <button type="button" id="register" class="am-btn am-btn-primary  am-btn-block tpl-btn-bg-color-success  tpl-login-btn">提交</button>
+                    </div>
+                    <div class="am-form-group">
+                        <button type="button" onclick="location.href='login.do';" class="am-btn am-btn-primary  am-btn-block tpl-btn-bg-color-success  tpl-login-btn">返回登录</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="http://cdn.bootcss.com/amazeui/2.7.2/js/amazeui.min.js"></script>
+    <!-- <script src="static/assets/js/app.js"></script> -->
+</body>
+</html>

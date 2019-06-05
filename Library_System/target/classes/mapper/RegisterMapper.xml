@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.cc.mapper.RegisterMapper">
+	
+	<!--注册账号  -->
+	<insert id="CheckedRegister" parameterType="com.cc.entity.User">
+		insert into user (user_name,user_pwd,user_email,user_phone,user_type) values
+						 (#{user_name},#{user_pwd},#{user_email},#{user_phone},#{user_type})
+	</insert>
+</mapper>
